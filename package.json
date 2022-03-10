@@ -1,0 +1,31 @@
+{
+  "name": "pingmon",
+  "version": "0.0.1",
+  "description": "A self-hosted website and job monitoring service, that sends downtime notifications to a slack channel.",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/EMPAT94/pingmon.git"
+  },
+  "keywords": [
+    "website",
+    "monitoring",
+    "cronjob",
+    "downtime",
+    "notifications",
+    "slack",
+    "timers"
+  ],
+  "author": "Pritesh Tupe <mail@priteshtupe.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EMPAT94/pingmon/issues"
+  },
+  "homepage": "https://github.com/EMPAT94/pingmon#readme",
+  "devDependencies": {
+    "ava": "^4.1.0"
+  }
+}
