@@ -1,12 +1,12 @@
 import http from "http";
 import https from "https";
 
-export function isUP(url) {
+export function isUP(url = "") {
   if (url.startsWith("https")) return _isUPhttps(url);
   else if (url.startsWith("http")) return _isUPhttp(url);
   else
     return Promise.reject(
-      "Invalid url encountered : " + url + "\n url must start with http(s)://"
+      "Invalid url encountered : " + url + "\n url must start with http[s]://"
     );
 }
 
@@ -38,7 +38,7 @@ function _isUPhttps(url) {
   });
 }
 
-export function notify(msg) {
+export function notify(msg = "") {
   const data = JSON.stringify(msg);
 
   const options = {
