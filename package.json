@@ -3,8 +3,11 @@
   "version": "0.0.1",
   "description": "A self-hosted website and job monitoring service, that sends downtime notifications to a slack channel.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "ava"
+    "start": "./cli.js",
+    "test": "ava",
+    "watch": "ava --watch"
   },
   "repository": {
     "type": "git",
@@ -27,5 +30,8 @@
   "homepage": "https://github.com/EMPAT94/pingmon#readme",
   "devDependencies": {
     "ava": "^4.1.0"
+  },
+  "dependencies": {
+    "winston": "^3.6.0"
   }
 }
