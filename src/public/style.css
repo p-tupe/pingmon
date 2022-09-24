@@ -1,0 +1,37 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  line-height: 2em;
+  font-size: 1.2em;
+}
+
+div.container {
+  max-width: 70%;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 800px) {
+  div.container {
+    max-width: 90%;
+  }
+}
+
+h1 {
+  margin-top: 2em;
+  text-align: center;
+}
+
+hr {
+  margin-bottom: 2em;
+}
+
+div#actions {
+  float: right;
+}
+
+div#live-status {
+  border: 2px solid black;
+  /* border-radius: 3em; */
+  padding: 3em;
+}
