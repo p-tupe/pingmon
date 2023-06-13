@@ -75,7 +75,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     })
     .join("");
 
-  // document.getElementById("live-status").innerHTML = liveStatusView;
+  document.getElementById("live-status").innerHTML = liveStatusView;
 });
 
 function currentStatus(o) {
