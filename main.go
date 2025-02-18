@@ -1,10 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+
+	"github.com/EMPAT94/pingmon/internal/config"
+)
 
 func main() {
-	// Read config
-	// Connect to DB?
-	// Start jobs
-	fmt.Println("Hello")
+	l := log.Default()
+
+	c, err := config.ReadConfig()
+	if err != nil {
+		l.Fatalln(err)
+	}
+
+	fmt.Println("Main:", c)
 }
