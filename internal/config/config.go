@@ -2,8 +2,12 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"net/url"
+	"os"
+	"strings"
 
+	"github.com/adrg/xdg"
 	"gopkg.in/ini.v1"
 )
 
@@ -27,12 +31,57 @@ type Config struct {
 	slack Slack
 }
 
-func ReadConfig() (*Config, error) {
+func checkCustomPath(customPath string) error {
+	_, err := os.Stat(customPath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createNewConfigFile() (string, error) {
+	configFilePath, err := xdg.ConfigFile("pingmon/config.ini")
+	if err != nil {
+		return "", err
+	}
+	_, err = os.Create(configFilePath)
+	if err != nil {
+		return "", err
+	}
+	return configFilePath, nil
+}
+
+func ReadConfig(customPath string) (*Config, error) {
 	cfg := new(Config)
 
-	raw, err := ini.Load("/tmp/config.ini")
+	configFilePath := ""
+
+	if customPath != "" {
+		err := checkCustomPath(customPath)
+		if err != nil {
+			return nil, fmt.Errorf("Error while reading custom config file path: %v", err)
+		}
+		configFilePath = customPath
+	} else {
+		var err error
+		configFilePath, err = xdg.SearchConfigFile("pingmon/config.ini")
+		if err != nil {
+			if strings.HasPrefix("could not locate", err.Error()) {
+				configFilePath, err = createNewConfigFile()
+				if err != nil {
+					return nil, fmt.Errorf("Error while creating new config file: %v", err)
+				}
+			} else {
+				return nil, fmt.Errorf("Error while reading config file: %v", err)
+			}
+		}
+	}
+
+	log.Println("Loading config from:", configFilePath)
+
+	raw, err := ini.Load(configFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("Error while reading config: %v", err)
+		return nil, fmt.Errorf("error while reading config: %v", err)
 	}
 
 	allSections := raw.Sections()
