@@ -10,7 +10,7 @@ import (
 func main() {
 	l := log.Default()
 
-	c, err := config.ReadConfig("~/.config/pingmon/config.ini")
+	c, err := config.ReadConfig("")
 	if err != nil {
 		l.Fatalln(err)
 	}

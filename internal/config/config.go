@@ -16,58 +16,49 @@ type Job struct {
 	Interval int
 }
 
-type Email struct {
+type Mailer struct {
 	Id       string
 	Password string
+	Server   string
 }
 
 type Slack struct {
-	webhook string
+	Webhook string
+}
+
+type Recipients struct {
+	Id []string
 }
 
 type Config struct {
-	jobs  []Job
-	email Email
-	slack Slack
-}
-
-func checkCustomPath(customPath string) error {
-	_, err := os.Stat(customPath)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func createNewConfigFile() (string, error) {
-	configFilePath, err := xdg.ConfigFile("pingmon/config.ini")
-	if err != nil {
-		return "", err
-	}
-	_, err = os.Create(configFilePath)
-	if err != nil {
-		return "", err
-	}
-	return configFilePath, nil
+	Jobs       []Job
+	Mailer     Mailer
+	Recipients Recipients
+	Slack      Slack
 }
 
 func ReadConfig(customPath string) (*Config, error) {
+	var err error
 	cfg := new(Config)
 
 	configFilePath := ""
 
 	if customPath != "" {
-		err := checkCustomPath(customPath)
+		_, err = os.Stat(customPath)
 		if err != nil {
 			return nil, fmt.Errorf("Error while reading custom config file path: %v", err)
 		}
 		configFilePath = customPath
 	} else {
-		var err error
 		configFilePath, err = xdg.SearchConfigFile("pingmon/config.ini")
 		if err != nil {
 			if strings.HasPrefix("could not locate", err.Error()) {
-				configFilePath, err = createNewConfigFile()
+				configFilePath, err = xdg.ConfigFile("pingmon/config.ini")
+				if err != nil {
+					return nil, fmt.Errorf("Error while creating new config file: %v", err)
+				}
+
+				_, err = os.Create(configFilePath)
 				if err != nil {
 					return nil, fmt.Errorf("Error while creating new config file: %v", err)
 				}
@@ -86,13 +77,18 @@ func ReadConfig(customPath string) (*Config, error) {
 
 	allSections := raw.Sections()
 	for _, section := range allSections {
-		if section.Name() == ini.DefaultSection {
+
+		switch section.Name() {
+		case ini.DefaultSection:
 			continue
-		} else if section.Name() == "Email" {
-			raw.Section("Email").MapTo(&cfg.email)
-		} else if section.Name() == "Slack" {
-			raw.Section("Slack").MapTo(&cfg.slack)
-		} else {
+
+		case "Mailer":
+			raw.Section("Mailer").MapTo(&cfg.Mailer)
+
+		case "Recipients":
+			raw.Section("Recipients").MapTo(&cfg.Recipients)
+
+		default:
 			jobUrl := section.Name()
 
 			if _, err := url.ParseRequestURI(jobUrl); err != nil {
@@ -110,17 +106,17 @@ func ReadConfig(customPath string) (*Config, error) {
 				Interval: jobInterval,
 			}
 
-			cfg.jobs = append(cfg.jobs, j)
+			cfg.Jobs = append(cfg.Jobs, j)
 		}
 	}
 
-	if len(cfg.jobs) == 0 {
+	if len(cfg.Jobs) == 0 {
 		return nil, fmt.Errorf("Please add atleast one job to the config")
 
 	}
 
-	if cfg.email.Id == "" && cfg.slack.webhook == "" {
-		return nil, fmt.Errorf("Please add either Email or Slack to the config")
+	if cfg.Mailer.Id == "" && cfg.Slack.Webhook == "" {
+		return nil, fmt.Errorf("Please add either Mailer or Slack to the config")
 	}
 
 	err = raw.StrictMapTo(cfg)
