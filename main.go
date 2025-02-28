@@ -1,11 +1,10 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,9 +20,9 @@ var l log.Logger = *log.Default()
 
 func main() {
 	l.Print("[INFO] Pingmon started!")
-	t := *time.NewTicker(time.Duration(interval * int(time.Second)))
 
-	for _ = range t.C {
+	t := *time.NewTicker(time.Duration(interval * int(time.Second)))
+	for range t.C {
 		for _, site := range sites {
 			go ping(site)
 		}
@@ -43,7 +42,8 @@ func ping(site string) {
 
 	l.Printf("[INFO] Status for %s %v", site, res.StatusCode)
 
-	ok := (res.StatusCode > 199 && res.StatusCode < 299) || (res.StatusCode >= 400 && res.StatusCode < 499)
+	ok := (res.StatusCode > 199 && res.StatusCode < 299) ||
+		(res.StatusCode >= 400 && res.StatusCode < 499)
 
 	if !ok {
 		l.Printf("[INFO] Generating alert for %s", site)
@@ -52,18 +52,8 @@ func ping(site string) {
 }
 
 func alert(site string, statusCode int) {
-	v, err := json.Marshal(map[string]string{
-		"text": "Could no reach " + site +
-			", received status code " + strconv.Itoa(statusCode) +
-			". It may be down!",
-	})
-
-	if err != nil {
-		l.Print("[ERROR] " + err.Error())
-		return
-	}
-
-	_, err = http.Post(slack_webhook, "application/json", bytes.NewBuffer(v))
+	msg := fmt.Sprintf(`{"text":"Could no reach %s, received status code %d. It may be down!"}`, site, statusCode)
+	_, err := http.Post(slack_webhook, "application/json", strings.NewReader(msg))
 	if err != nil {
 		l.Print("[ERROR] " + err.Error())
 	}
