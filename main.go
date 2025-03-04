@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-
 	"time"
 
 	"github.com/EMPAT94/pingmon/internal/app"
@@ -15,7 +14,6 @@ import (
 var l log.Logger = *log.Default()
 
 func main() {
-	l.Print("[INFO] Pingmon started!")
 
 	cmd, err := flag.Parse()
 
@@ -27,7 +25,10 @@ func main() {
 	switch cmd {
 	case "help":
 		help.Show()
+		return
 	}
+
+	l.Print("[INFO] Pingmon started!")
 
 	c := config.New()
 	t := *time.NewTicker(c.Interval)

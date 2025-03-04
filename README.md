@@ -16,17 +16,30 @@ OR
 curl .../install.sh
 ```
 
-## Usage
+Pingmon works off a config file and sets itself up as a service. Following commands, in order, help setting things up the first time:
+
+1. `pingmon init` - Create config and systemd files, if they don't already exits. This will ask for some inputs to populate the config.
+
+2. `pingmon test` - A one off version of "start", will send test notifications and show site response as output.
+
+3. `pingmon start` - Enable monitoring service, if everything worked fine above.
+
+## Help
 
 ```sh
-pingmon help
-pingmon init
-pingmon test
-pingmon status
-pingmon log
-pingmon start
-pingmon stop
-pingmon remove
+Usage:
+    pingmon [command]
+
+Commands:
+    help       Prints this help
+    init       Initialize pingmon site monitoring service
+    status     Show latest pingmon results
+    restart    Gracefully stop pingmon service
+    remove     Clear all pingmon data and stop service
+    test       Test network and notifications
+    log        Show latest pingmon logs
+    start      Start pingmon service, if not already running
+    stop       Clear all pingmon data and stop service
 ```
 
 ## Config
