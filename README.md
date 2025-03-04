@@ -7,7 +7,13 @@ A simple fire 'n forget site monitoring service.
 ## Setup
 
 ```sh
-brew install pingmon
+go install .../pingmon.git
+```
+
+OR
+
+```sh
+curl .../install.sh
 ```
 
 ## Usage
@@ -19,8 +25,8 @@ pingmon test
 pingmon status
 pingmon log
 pingmon start
-pingmon restart
 pingmon stop
+pingmon remove
 ```
 
 ## Config
