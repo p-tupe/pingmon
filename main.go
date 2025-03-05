@@ -1,43 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"time"
+	"flag"
 
-	"github.com/EMPAT94/pingmon/internal/app"
 	"github.com/EMPAT94/pingmon/internal/cmd/help"
-	"github.com/EMPAT94/pingmon/internal/config"
-	"github.com/EMPAT94/pingmon/internal/flag"
+	"github.com/EMPAT94/pingmon/internal/cmd/start"
+	"github.com/EMPAT94/pingmon/internal/cmd/test"
 )
 
-var l log.Logger = *log.Default()
-
 func main() {
-
-	cmd, err := flag.Parse()
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	flag.Parse()
+	var cmd = flag.Arg(0)
 
 	switch cmd {
 	case "help":
 		help.Show()
-		return
+	case "start":
+		start.Start()
+	case "test":
+		test.Test()
+	default:
+		help.Show()
 	}
-
-	l.Print("[INFO] Pingmon started!")
-
-	c := config.New()
-	t := *time.NewTicker(c.Interval)
-
-	for range t.C {
-		for _, site := range c.Sites {
-			go app.Ping(site)
-		}
-	}
-
-	l.Print("[INFO] Pingmon closed!")
 }

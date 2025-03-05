@@ -3,7 +3,7 @@ package help
 import (
 	"fmt"
 
-	"github.com/EMPAT94/pingmon/internal/flag"
+	"github.com/EMPAT94/pingmon/internal/config"
 )
 
 func Show() {
@@ -16,7 +16,9 @@ Usage:
 Commands: 
 `)
 
-	for k, v := range flag.SubCmds {
+	for k, v := range config.Cmds {
 		fmt.Printf("    %-10s %s\n", k, v)
 	}
+
+	fmt.Println()
 }
