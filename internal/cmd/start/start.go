@@ -13,7 +13,7 @@ func Start() {
 
 	l.Print("[INFO] Pingmon started!")
 
-	c := config.New()
+	c := config.Parse()
 	t := *time.NewTicker(c.Interval)
 
 	for range t.C {

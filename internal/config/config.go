@@ -1,6 +1,10 @@
 package config
 
-import "time"
+import (
+	"time"
+
+	"github.com/EMPAT94/pingmon/internal/config"
+)
 
 var Cmds = map[string]string{
 	"help":    "Prints this help",
@@ -14,13 +18,23 @@ var Cmds = map[string]string{
 	"remove":  "Clear all pingmon data and stop service",
 }
 
+type Mailer struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+	From     string
+}
+
 type Config struct {
 	Sites        []string
 	SlackWebhook string
 	Interval     time.Duration
+	Mailer       Mailer
+	EmailTo      []string
 }
 
-func New() *Config {
+func Parse() *Config {
 	return &Config{
 		Sites: []string{
 			"https://www.example.com",
@@ -28,5 +42,13 @@ func New() *Config {
 		},
 		Interval:     30 * time.Minute,
 		SlackWebhook: "",
+		Mailer: Mailer{
+			"Host",
+			587,
+			"Username",
+			"Password",
+			"From@mail.com",
+		},
+		EmailTo: []string{"Rcpt@mail.com"},
 	}
 }

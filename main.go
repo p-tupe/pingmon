@@ -6,6 +6,7 @@ import (
 	"github.com/EMPAT94/pingmon/internal/cmd/help"
 	"github.com/EMPAT94/pingmon/internal/cmd/start"
 	"github.com/EMPAT94/pingmon/internal/cmd/test"
+	"github.com/EMPAT94/pingmon/internal/config"
 )
 
 func main() {
@@ -18,7 +19,8 @@ func main() {
 	case "start":
 		start.Start()
 	case "test":
-		test.Test()
+		var config = config.Parse()
+		test.Test(config)
 	default:
 		help.Show()
 	}
