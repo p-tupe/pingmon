@@ -1,10 +1,6 @@
 package config
 
-import (
-	"time"
-
-	"github.com/EMPAT94/pingmon/internal/config"
-)
+import "time"
 
 var Cmds = map[string]string{
 	"help":    "Prints this help",
