@@ -26,7 +26,7 @@ Pingmon works off a config file and sets itself up as a service. Following comma
 
 ## Help
 
-```sh
+```
 Usage:
     pingmon [command]
 
@@ -34,7 +34,6 @@ Commands:
     help       Prints this help
     init       Initialize pingmon site monitoring service
     status     Show latest pingmon results
-    restart    Gracefully stop pingmon service
     remove     Clear all pingmon data and stop service
     test       Test network and notifications
     log        Show latest pingmon logs
@@ -48,10 +47,14 @@ A sample config:
 
 ```ini
 site.com=30
-email=sender@mail.com
 slack_webhook=https://something
-up_status=
-down_status=
+host="smtp.something.com"
+port="25/587/465"
+username="username"
+password="password"
+from="sender@mail.com"
+to="receipient@mail.com"
+
 ```
 
 ## How it works
