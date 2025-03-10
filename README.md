@@ -32,7 +32,7 @@ Usage:
 
 Commands:
     help       Prints this help
-    init       Initialize pingmon site monitoring service
+    setup      Setup pingmon config and service files
     status     Show latest pingmon results
     remove     Clear all pingmon data and stop service
     test       Test network and notifications

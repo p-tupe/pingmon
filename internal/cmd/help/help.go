@@ -3,7 +3,7 @@ package help
 import (
 	"fmt"
 
-	"github.com/EMPAT94/pingmon/internal/config"
+	"github.com/EMPAT94/pingmon/internal/app/config"
 )
 
 func Show() {

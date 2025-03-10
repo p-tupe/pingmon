@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/EMPAT94/pingmon/internal/config"
+	"github.com/EMPAT94/pingmon/internal/app/config"
 )
 
 func SendMail(config *config.Config) {

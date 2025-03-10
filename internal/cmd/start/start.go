@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/EMPAT94/pingmon/internal/app"
-	"github.com/EMPAT94/pingmon/internal/config"
+	"github.com/EMPAT94/pingmon/internal/app/config"
 )
 
 func Start() {

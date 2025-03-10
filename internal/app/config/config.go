@@ -14,7 +14,7 @@ var Cmds = map[string]string{
 	"remove":  "Clear all pingmon data and stop service",
 }
 
-type Mailer struct {
+type mailer struct {
 	Host     string
 	Port     int
 	Username string
@@ -26,7 +26,7 @@ type Config struct {
 	Sites        []string
 	SlackWebhook string
 	Interval     time.Duration
-	Mailer       Mailer
+	Mailer       mailer
 	EmailTo      []string
 }
 
@@ -38,7 +38,7 @@ func Parse() *Config {
 		},
 		Interval:     30 * time.Minute,
 		SlackWebhook: "",
-		Mailer: Mailer{
+		Mailer: mailer{
 			"Host",
 			587,
 			"Username",
