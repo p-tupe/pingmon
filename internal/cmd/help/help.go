@@ -13,7 +13,7 @@ A simple fire 'n forget site monitoring service.
 Usage:
     pingmon [command]
 
-Commands: 
+Commands:
 `)
 
 	for k, v := range config.Cmds {

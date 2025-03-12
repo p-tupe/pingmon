@@ -1,10 +1,15 @@
 package config
 
-import "time"
+import (
+	"encoding/json"
+	"os"
+	"path/filepath"
+	"time"
+)
 
 var Cmds = map[string]string{
 	"help":    "Prints this help",
-	"init":    "Initialize pingmon site monitoring service",
+	"setup":   "Setup pingmon config and service files",
 	"test":    "Test network and notifications",
 	"status":  "Show latest pingmon results",
 	"log":     "Show latest pingmon logs",
@@ -14,7 +19,17 @@ var Cmds = map[string]string{
 	"remove":  "Clear all pingmon data and stop service",
 }
 
-type mailer struct {
+type Site struct {
+	URL          string
+	Interval     time.Duration `json:",omitempty"`
+	UpStatus     int           `json:",omitempty"`
+	DownStatus   int           `json:",omitempty"`
+	EmailTo      []string      `json:",omitempty"`
+	SlackWebhook string        `json:",omitempty"`
+	Mailer       *Mailer       `json:",omitempty"`
+}
+
+type Mailer struct {
 	Host     string
 	Port     int
 	Username string
@@ -23,28 +38,39 @@ type mailer struct {
 }
 
 type Config struct {
-	Sites        []string
-	SlackWebhook string
+	Sites        []Site
 	Interval     time.Duration
-	Mailer       mailer
-	EmailTo      []string
+	SlackWebhook string   `json:",omitempty"`
+	EmailTo      []string `json:",omitempty"`
+	Mailer       *Mailer  `json:",omitempty"`
 }
 
-func Parse() *Config {
-	return &Config{
-		Sites: []string{
-			"https://www.example.com",
-			"https://www.priteshtupe.com",
-		},
-		Interval:     30 * time.Minute,
-		SlackWebhook: "",
-		Mailer: mailer{
-			"Host",
-			587,
-			"Username",
-			"Password",
-			"From@mail.com",
-		},
-		EmailTo: []string{"Rcpt@mail.com"},
+func Parse() (*Config, error) {
+	config := Config{}
+
+	userConfigDir, err := os.UserConfigDir()
+	if err != nil {
+		return nil, err
 	}
+
+	pingmonConfigDir := filepath.Join(userConfigDir, "pingmon")
+
+	err = os.MkdirAll(pingmonConfigDir, os.ModeDir.Perm())
+	if err != nil {
+		return nil, err
+	}
+
+	configFilePath := filepath.Join(pingmonConfigDir, "/config.json")
+
+	raw, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(raw, &config)
+	if err != nil {
+		return nil, err
+	}
+
+	return &config, nil
 }

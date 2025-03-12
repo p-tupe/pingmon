@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/EMPAT94/pingmon/internal/app/config"
 
@@ -21,11 +22,14 @@ func main() {
 	case "help":
 		help.Show()
 	case "setup":
-		setup.Init()
+		setup.Setup()
 	case "start":
 		start.Start()
 	case "test":
-		var config = config.Parse()
+		config, err := config.Parse()
+		if err != nil {
+			log.Fatalln("Error reading config.json", err)
+		}
 		test.Test(config)
 	default:
 		help.Show()
