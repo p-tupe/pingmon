@@ -16,7 +16,7 @@ var sample_config = config.Config{
 }
 
 func Setup() {
-	fmt.Println("Initializing pingmon...")
+	fmt.Println("Setting up pingmon...")
 
 	userConfigDir, err := os.UserConfigDir()
 	if err != nil {

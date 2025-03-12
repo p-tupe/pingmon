@@ -1,5 +1,7 @@
 # Pingmon
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/EMPAT94/pingmon.svg)](https://pkg.go.dev/github.com/EMPAT94/pingmon)
+
 > Under construction
 
 A simple fire 'n forget site monitoring service.
