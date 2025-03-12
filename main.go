@@ -1,3 +1,30 @@
+/*
+Pingmon is a cli tool for site monitoring and downtime alert service.
+
+It pulls mailer/slack info and the sites list from a config file,
+and checks the status at every interval (default 30min).
+If the response status code is >499 or there was an error reach the site,
+it sends an alert in the form of an email or slack message as set in the config.
+
+Usage:
+
+	pingmon [command]
+
+Commands:
+
+	help       Prints this help
+	setup      Setup pingmon config and service files
+	status     Show latest pingmon results
+	remove     Clear all pingmon data and stop service
+	test       Test network and notifications
+	log        Show latest pingmon logs
+	start      Start pingmon service, if not already running
+	stop       Clear all pingmon data and stop service
+
+Pingmon can be installed in several ways - as a docker container, as a systemd unit, as a binary, or build from source.
+
+For convenience, a "setup" command is provided that creates a user-guided config.json file in a suitable directory depending on your system, and if it detects a linux OS, will create a corresponding systemd service file as well.
+*/
 package main
 
 import (

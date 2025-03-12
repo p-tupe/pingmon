@@ -8,11 +8,21 @@ A simple fire 'n forget site monitoring service.
 
 ## Setup
 
+Pingmon can be installed in several ways - as a docker container, as a systemd unit, as a binary, or even build from source:
+
 ```sh
 go install github.com/EMPAT94/pingmon@latest
 ```
 
-Pingmon works off a config file and sets itself up as a systemd service. Just `pingmon setup` and follow the prompts to get up and running.
+```sh
+curl https://.../install.sh | sh
+```
+
+```sh
+docker pull ...
+```
+
+For convenience, a "setup" command is provided that creates a user-guided config.json file in a suitable directory depending on your system, and if it detects a linux OS, will create a corresponding systemd service file as well.
 
 ## Help
 
@@ -31,7 +41,9 @@ Commands:
     stop       Clear all pingmon data and stop service
 ```
 
-## How it works
+## Advanced Config
+
+## How pingmon works
 
 Pingmon sends an http request to the site URLs defined in the config at the start of every interval. On receiving a response, it parses the headers and extracts the status code.
 
