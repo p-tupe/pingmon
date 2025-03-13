@@ -4,7 +4,7 @@
 
 > Under construction
 
-A simple fire 'n forget site monitoring service.
+Pingmon is a cli tool for site monitoring and downtime alert service.
 
 ## Setup
 
