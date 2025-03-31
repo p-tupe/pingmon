@@ -1,6 +1,6 @@
 # Pingmon
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/EMPAT94/pingmon.svg)](https://pkg.go.dev/github.com/EMPAT94/pingmon)
+[![Go Reference](https://pkg.go.dev/badge/github.com/p-tupe/pingmon.svg)](https://pkg.go.dev/github.com/p-tupe/pingmon)
 
 > Under construction
 
@@ -11,7 +11,7 @@ Pingmon is a cli tool for site monitoring and downtime alert service.
 Pingmon can be installed in several ways - as a docker container, as a systemd unit, as a binary, or even build from source:
 
 ```sh
-go install github.com/EMPAT94/pingmon@latest
+go install github.com/p-tupe/pingmon@latest
 ```
 
 ```sh
@@ -42,6 +42,10 @@ Commands:
 ```
 
 ## Advanced Config
+
+## Creating a slack incoming webhook
+
+https://api.slack.com/messaging/webhooks
 
 ## How pingmon works
 

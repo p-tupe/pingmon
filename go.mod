@@ -1,3 +1,3 @@
-module github.com/EMPAT94/pingmon
+module github.com/p-tupe/pingmon
 
 go 1.24.0

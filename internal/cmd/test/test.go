@@ -3,7 +3,7 @@ package test
 import (
 	"fmt"
 
-	"github.com/EMPAT94/pingmon/internal/app/config"
+	"github.com/p-tupe/pingmon/internal/app/config"
 )
 
 func Test(config *config.Config) {

@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/EMPAT94/pingmon/internal/app/config"
+	"github.com/p-tupe/pingmon/internal/app/config"
 )
 
 var sample_config = config.Config{

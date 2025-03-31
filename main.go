@@ -31,12 +31,11 @@ import (
 	"flag"
 	"log"
 
-	"github.com/EMPAT94/pingmon/internal/app/config"
-
-	"github.com/EMPAT94/pingmon/internal/cmd/help"
-	"github.com/EMPAT94/pingmon/internal/cmd/setup"
-	"github.com/EMPAT94/pingmon/internal/cmd/start"
-	"github.com/EMPAT94/pingmon/internal/cmd/test"
+	"github.com/p-tupe/pingmon/internal/app/config"
+	"github.com/p-tupe/pingmon/internal/cmd/help"
+	"github.com/p-tupe/pingmon/internal/cmd/setup"
+	"github.com/p-tupe/pingmon/internal/cmd/start"
+	"github.com/p-tupe/pingmon/internal/cmd/test"
 )
 
 func main() {
