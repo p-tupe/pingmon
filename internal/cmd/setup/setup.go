@@ -1,7 +1,6 @@
 package setup
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,6 +12,10 @@ import (
 var sample_config = config.Config{
 	Sites:    []config.Site{{URL: "https://www.example.com"}},
 	Interval: 30,
+	Mailer: &config.Mailer{
+		Port: 587,
+	},
+	EmailTo: make([]string, 1),
 }
 
 func Setup() {
@@ -33,61 +36,96 @@ func Setup() {
 	}
 
 	configFilePath := filepath.Join(pingmonConfigDir, "/config.json")
-	cf, err := os.Create(configFilePath)
-	defer cf.Close()
-	if err != nil {
-		fmt.Println("Error creating pingmon config file:", err)
-		return
-	}
+	//
+	// _, err = os.Stat(configFilePath)
+	// if err != nil && !errors.Is(err, fs.ErrNotExist) {
+	// 	fmt.Println("Error accessing pingmon config file:", err)
+	// 	return
+	// } else {
+	// 	fmt.Printf("File already exists at %s, overwrite? y/n: ", pingmonConfigDir)
+	// 	yes := ""
+	// 	_, err = fmt.Scan(&yes)
+	// 	if err != nil {
+	// 		fmt.Println("Error reading user input: ", err)
+	// 		return
+	// 	}
+	// 	if yes != "yes" && yes != "y" && yes != "Y" {
+	// 		return
+	// 	}
+	// }
+	//
+	// cf, err := os.Create(configFilePath)
+	// if err != nil {
+	// 	fmt.Println("Error creating pingmon config file:", err)
+	// 	return
+	// }
+	// defer cf.Close()
+	//
+	// readVal("Add a website's full url to monitor (default https://www.example.com): ", &sample_config.Sites[0].URL)
+	// readVal("Site check interval (default 30 min): ", &sample_config.Interval)
+	// readVal("Add your slack webhook (eg https://hooks.slack.com/your/custom/id): ", &sample_config.SlackWebhook)
+	//
+	// fmt.Print("Add email config now? y/n: ")
+	// yes := ""
+	// _, err = fmt.Scan(&yes)
+	// if err != nil {
+	// 	fmt.Println("Error reading user input: ", err)
+	// 	return
+	// }
+	// if yes == "yes" || yes == "y" || yes == "Y" {
+	// 	readVal("Host (eg smtp.mail.host): ", &sample_config.Mailer.Host)
+	// 	readVal("Port (default 587): ", &sample_config.Mailer.Port)
+	// 	readVal("Username: ", &sample_config.Mailer.Username)
+	// 	readVal("Password: ", &sample_config.Mailer.Password)
+	// 	readVal("From Id: ", &sample_config.Mailer.From)
+	// 	readVal("To Id: ", &sample_config.EmailTo[0])
+	// }
+	//
+	// err = json.NewEncoder(cf).Encode(sample_config)
+	// if err != nil {
+	// 	fmt.Println("Error writing pingmon config file:", err)
+	// 	return
+	// }
 
-	readVal("Add a website's full url to monitor (default https://www.example.com): ", &sample_config.Sites[0].URL)
-	readVal("Site check interval (default 30 min): ", &sample_config.Interval)
-	readVal("Add your slack webhook (eg https://hooks.slack.com/your/custom/id): ", &sample_config.SlackWebhook)
-
-	fmt.Print("Add email config now? y/n: ")
 	var yes string
-	_, err = fmt.Scan(&yes)
-	if err != nil {
-		fmt.Println("Error reading user input: ", err)
-		return
-	}
-	if yes == "yes" || yes == "y" || yes == "Y" {
-		readVal("Host (smtp.mail.host): ", &sample_config.Mailer.Host)
-		readVal("Port (587): ", &sample_config.Mailer.Port)
-		readVal("Username: ", &sample_config.Mailer.Username)
-		readVal("Password: ", &sample_config.Mailer.Password)
-		readVal("From Id: ", &sample_config.Mailer.From)
-		readVal("To Id: ", &sample_config.EmailTo[0])
-	}
-
-	err = json.NewEncoder(cf).Encode(sample_config)
-	if err != nil {
-		fmt.Println("Error writing pingmon config file:", err)
-		return
-	}
 
 	fmt.Println("Successfully created config at", configFilePath)
 
-	fmt.Print(os.ExpandEnv("Open config file in $EDITOR? y/n: "))
+	fmt.Print("Configure systemd unit now? y/n: ")
 	_, err = fmt.Scan(&yes)
 	if err != nil {
 		fmt.Println("Error reading user input: ", err)
+		return
+	}
+	if yes == "yes" || yes == "y" || yes == "Y" {
+		cp := exec.Command("sudo", "cp", "./pingmon.service", "/etc/systemd/system/")
+		if err := cp.Run(); err != nil {
+			fmt.Println("Error copying pingmon.service into /etc/systemd/system: ", err)
+			return
+		}
+
+		err = os.Chmod("/etc/systemd/system/pingmon.service", 0640)
+		if err != nil {
+			fmt.Println("Error changing file permissions at /etc/systemd/system/pingmon.service: ", err)
+			return
+		}
+
+		reload := exec.Command("sudo", "systemctl daemon-reload")
+		if err := reload.Run(); err != nil {
+			fmt.Println("Error opening directory /etc/systemd/system: ", err)
+			return
+		}
+
+		enable := exec.Command("sudo", "systemctl enable pingmon")
+		if err := enable.Run(); err != nil {
+			fmt.Println("Error opening directory /etc/systemd/system: ", err)
+			return
+		}
+
+		fmt.Println("Pingmon service configured successfully\nUse \"pingmon start\" to start monitoring")
 	}
 
-	if yes == "yes" || yes == "y" || yes == "Y" {
-		editor, ok := os.LookupEnv("EDITOR")
-		if !ok {
-			fmt.Println("No editor found! Please open the file on above path and edit manually.")
-		} else {
-			cmd := exec.Command(editor, configFilePath)
-			cmd.Stdin = os.Stdin
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			if err = cmd.Run(); err != nil {
-				fmt.Println("Unexpected error while opening file for editing: ", err)
-			}
-		}
-	}
+	fmt.Println("Pingmon setup successful!")
 }
 
 func readVal(msg string, v any) {
