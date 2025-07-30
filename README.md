@@ -8,51 +8,46 @@ Pingmon is a cli tool for site monitoring and downtime alert service.
 
 ## Setup
 
-Pingmon can be installed in several ways - as a docker container, as a systemd unit, as a binary, or even build from source:
+Pingmon can be installed in several ways - as a docker container, as a systemd unit, as a binary, or even build from source. Here's a direct installation from pkg.go.dev:
 
 ```sh
 go install github.com/p-tupe/pingmon@latest
 ```
 
-```sh
-curl https://.../install.sh | sh
-```
+Give it a `config.json` file, and off it goes
 
 ```sh
-docker pull ...
+pingmon -c /path/to/config.json
 ```
 
-For convenience, a "setup" command is provided that creates a user-guided config.json file in a suitable directory depending on your system, and if it detects a linux OS, will create a corresponding systemd service file as well.
+## Configuration
 
-## Help
+```json
+{
+  "sites": [
+    { "url": "https://www.example.com" },
+    { "url": "https://google.com" }
+  ],
 
+  "ntfy": "ntfy.sh/channel",
+
+  "slackWebhook": "https://hooks.slack.com/services/channel123ID",
+
+  "mailTo": ["receipient@one.com", "receipient@two.com"],
+  "mailer": {
+    "host": "smtp.mail.com",
+    "port": 587,
+    "username": "mailerUsername",
+    "password": "mailerPassword",
+    "from": "from@mail.com"
+  }
+}
 ```
-Usage:
-    pingmon [command]
 
-Commands:
-    help       Prints this help
-    setup      Setup pingmon config and service files
-    status     Show latest pingmon results
-    remove     Clear all pingmon data and stop service
-    test       Test network and notifications
-    log        Show latest pingmon logs
-    start      Start pingmon service, if not already running
-    stop       Clear all pingmon data and stop service
-```
-
-## Advanced Config
-
-## Creating a slack incoming webhook
-
-https://api.slack.com/messaging/webhooks
-
-## How pingmon works
+## How it works
 
 Pingmon sends an http request to the site URLs defined in the config at the start of every interval. On receiving a response, it parses the headers and extracts the status code.
 
-If the status code is less than 500 (0 - 499), the site is considered UP. This behaviour is configurable per site.
+If the status code is less than 500 (0 - 499), the site is considered up.
 
-If the site is UP, then the status is simply logged. If the site is DOWN however, then an alert is generated on either the email or slack medium, depending on the config values.
-
-All config options are global by default, and thus apply to all site. However, each option can also be configured per site.
+If the site is up, then the status is simply saved in DB. If the site is down however, then an alert is generated on the configured channels, depending on the config values.

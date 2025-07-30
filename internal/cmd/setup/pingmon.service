@@ -1,9 +1,0 @@
-[Unit]
-Description=Pingmon monitoring service
-
-[Service]
-ExecStart=/usr/bin/env pingmon
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
