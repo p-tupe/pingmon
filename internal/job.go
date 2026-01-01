@@ -15,6 +15,17 @@ type Ping struct {
 	Interval time.Duration
 }
 
+func InitJobs(ctx context.Context) {
+	for _, site := range cfg.Sites {
+		job, err := NewPingJob(site)
+		if err != nil {
+			log.Fatalln("Error while creating new ping job:", err.Error())
+		}
+
+		go job.Start(ctx)
+	}
+}
+
 func NewPingJob(site Site) (*Ping, error) {
 	ping := &Ping{URL: site.URL, Interval: site.Interval}
 
@@ -59,7 +70,7 @@ func checkSite(ping *Ping) {
 	}
 
 	if !ping.OK {
-		go Alert(msg)
+		alertChan <- msg
 	}
 
 	log.Println(msg)

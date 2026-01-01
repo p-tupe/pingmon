@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,7 +9,30 @@ import (
 	"strings"
 )
 
-func Alert(msg string) {
+var alertChan chan<- string
+
+func InitAlertChan(ctx context.Context) {
+	ch := make(chan string, 1)
+	alertChan = ch
+
+	var auth smtp.Auth
+	if cfg.Mailer != nil {
+		auth = smtp.PlainAuth("", cfg.Mailer.Username, cfg.Mailer.Password, cfg.Mailer.Host)
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+
+		case msg := <-ch:
+			Alert(msg, auth)
+		}
+	}
+
+}
+
+func Alert(msg string, auth smtp.Auth) {
 	if cfg.PostRequest != nil {
 		_, err := http.Post(cfg.PostRequest.URL, cfg.PostRequest.ContentType, strings.NewReader(msg))
 		if err != nil {
@@ -19,7 +43,6 @@ func Alert(msg string) {
 	}
 
 	if cfg.Mailer != nil {
-		auth := smtp.PlainAuth("", cfg.Mailer.Username, cfg.Mailer.Password, cfg.Mailer.Host)
 		msg := fmt.Appendf(make([]byte, 0, 50), "From: %s \r\nTo: %s\r\nSubject: Pingmon Alert\r\n\r\n %s \r\n", cfg.Mailer.From, strings.Join(cfg.MailTo, ","), msg)
 		err := smtp.SendMail(cfg.Mailer.Host+":"+cfg.Mailer.Port, auth, cfg.Mailer.From, cfg.MailTo, msg)
 		if err != nil {
