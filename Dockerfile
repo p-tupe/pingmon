@@ -1,4 +1,4 @@
-FROM golang:1.24 AS build
+FROM golang:1.25 AS build
 
 WORKDIR /build
 
@@ -9,8 +9,8 @@ FROM scratch
 
 WORKDIR /app
 
-# COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
-# COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /build/bin/pingmon /app
 
-CMD [ "/app/pingmon" ]
+CMD [ "/app/pingmon", "--server" ]

@@ -2,8 +2,8 @@ package internal
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 	"time"
 )
@@ -26,14 +26,14 @@ type Mailer struct {
 
 type PostRequest struct {
 	// URL to send the post request to
-	URL string
+	URL string `json:"url"`
 
 	// ContentType of the request body
-	ContentType string
+	ContentType string `json:"contentType"`
 
 	// Authorization Token Header
 	// If "Bearer xxxyyzz", include "Bearer" as well
-	Authorization string
+	Authorization string `json:"authorization,omitempty"`
 }
 
 type Config struct {
@@ -51,12 +51,16 @@ type Config struct {
 
 	// Global site-check interval in seconds
 	// Defaults to 30m
-	Interval time.Duration
+	Interval time.Duration `json:"interval,omitempty"`
 
 	// Path/file to save state in
 	// Defaults to "./pingmon.csv"
-	Store string
+	Store string `json:"store,omitempty"`
 }
+
+var ErrNoSite = errors.New("Config must have atleast one site to monitor!")
+var ErrNoAlert = errors.New("Config must have atleast one alert mechanism!")
+var ErrNoMailTo = errors.New("Config must have atleast one recipient 'mailTo'!")
 
 var cfg *Config
 
@@ -66,8 +70,6 @@ func NewConfig(path string) (*Config, error) {
 		MailTo: []string{},
 	}
 
-	log.Println("Reading config from", path)
-
 	configFile, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("Error while reading file %v", err)
@@ -76,6 +78,18 @@ func NewConfig(path string) (*Config, error) {
 	err = json.Unmarshal(configFile, &cfg)
 	if err != nil {
 		return nil, fmt.Errorf("Error while unmarshalling file %v", err)
+	}
+
+	if len(cfg.Sites) == 0 {
+		return nil, ErrNoSite
+	}
+
+	if cfg.Mailer == nil && cfg.PostRequest == nil {
+		return nil, ErrNoAlert
+	}
+
+	if cfg.Mailer != nil && len(cfg.MailTo) == 0 {
+		return nil, ErrNoMailTo
 	}
 
 	if cfg.Store == "" {

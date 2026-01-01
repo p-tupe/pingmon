@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -11,7 +12,12 @@ import (
 )
 
 func main() {
-	cfg, err := i.NewConfig("./config.json")
+	// startServer := flag.Bool("string", false, "start pingmon server")
+	configPath := flag.String("config", "./config.json", "json configuration file path")
+	flag.Parse()
+
+	log.Println("Reading config from", *configPath)
+	cfg, err := i.NewConfig(*configPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
