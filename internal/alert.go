@@ -9,30 +9,15 @@ import (
 	"strings"
 )
 
-var alertChan chan<- string
+var auth smtp.Auth
 
-func InitAlertChan(ctx context.Context) {
-	ch := make(chan string, 1)
-	alertChan = ch
-
-	var auth smtp.Auth
+func InitAlert(ctx context.Context) {
 	if cfg.Mailer != nil {
 		auth = smtp.PlainAuth("", cfg.Mailer.Username, cfg.Mailer.Password, cfg.Mailer.Host)
 	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			return
-
-		case msg := <-ch:
-			Alert(msg, auth)
-		}
-	}
-
 }
 
-func Alert(msg string, auth smtp.Auth) {
+func SendAlert(msg string) {
 	if cfg.PostRequest != nil {
 		_, err := http.Post(cfg.PostRequest.URL, cfg.PostRequest.ContentType, strings.NewReader(msg))
 		if err != nil {

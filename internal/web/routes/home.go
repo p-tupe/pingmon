@@ -1,0 +1,12 @@
+package routes
+
+import (
+	"io"
+	"net/http"
+)
+
+func HomePage() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "OK")
+	}
+}

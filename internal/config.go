@@ -10,6 +10,7 @@ import (
 
 type Site struct {
 	// Check at every x second interval
+	// Defaults to 30m
 	Interval time.Duration `json:"interval,omitempty"`
 
 	// Web URL of the site
@@ -36,6 +37,16 @@ type PostRequest struct {
 	Authorization string `json:"authorization,omitempty"`
 }
 
+type Server struct {
+	// Address of server in host:port format
+	// Defaults to :8080
+	Addr string `json:"host,omitempty"`
+
+	// Should start the server?
+	// Defaults to true
+	Enabled bool `json:"enabled,omitempty"`
+}
+
 type Config struct {
 	// List of sites to ping
 	Sites []Site `json:"sites"`
@@ -49,13 +60,12 @@ type Config struct {
 	// Custom webhook to send alert on
 	PostRequest *PostRequest `json:"postRequest,omitempty"`
 
-	// Global site-check interval in seconds
-	// Defaults to 30m
-	Interval time.Duration `json:"interval,omitempty"`
-
 	// Path/file to save state in
 	// Defaults to "./pingmon.csv"
 	Store string `json:"store,omitempty"`
+
+	// Server config
+	Server Server `json:"server"`
 }
 
 var ErrNoSite = errors.New("Config must have atleast one site to monitor!")
@@ -68,6 +78,10 @@ func NewConfig(path string) (*Config, error) {
 	cfg = &Config{
 		Sites:  []Site{},
 		MailTo: []string{},
+		Server: Server{
+			Addr:    ":8080",
+			Enabled: true,
+		},
 	}
 
 	configFile, err := os.ReadFile(path)
@@ -94,10 +108,6 @@ func NewConfig(path string) (*Config, error) {
 
 	if cfg.Store == "" {
 		cfg.Store = DEFAULT_STORE
-	}
-
-	if cfg.Interval == 0 {
-		cfg.Interval = DEFAULT_INTERVAL
 	}
 
 	if cfg.PostRequest != nil && cfg.PostRequest.ContentType == "" {
