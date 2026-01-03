@@ -6,14 +6,14 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/p-tupe/pingmon/internal/web/routes"
+	"github.com/p-tupe/pingmon/internal/web"
 )
 
 func StartServer(ctx context.Context) {
 	log.Println("Starting server on ", cfg.Server.Addr)
 
 	mux := http.NewServeMux()
-	for path, handler := range routes.All {
+	for path, handler := range web.Routes {
 		mux.HandleFunc(path, handler)
 	}
 
