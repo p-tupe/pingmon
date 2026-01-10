@@ -2,13 +2,54 @@
 <html>
   <head>
     <title>Pingmon</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
   </head>
-  <body style="width: 90%; max-width: 1440px; margin: 2em auto">
+  <body>
     <header>
-      <h1>Config</h1>
+      <h1>Update Config</h1>
+
+      <nav>
+        <a href="/" aria-disabled="true">Home</a>
+        <a href="/site">Add Site</a>
+        <a href="/config">Update Config</a>
+        <a href="#" download>Download Logs</a>
+      </nav>
     </header>
+
     <main>
-      <span>Box will come here</span>
+      <form action="/config">
+        <h2>Email Config</h2>
+        <label for="mailTo">Email To</label>
+        <input id="mailTo" type="email" placeholder="recipient@mail.com" />
+
+        <br />
+
+        <h3>Mailer</h3>
+        <label for="host">Host</label>
+        <input id="host" type="text" placeholder="smtp.mail.com" />
+        <label for="port">Port</label>
+        <input id="port" type="number" placeholder="567" />
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="user-name" />
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="password" />
+        <label for="from">Email From</label>
+        <input id="from" type="email" placeholder="from-automated@mail.com" />
+
+        <h2>Webhook Config</h2>
+        <label for="url">URL</label>
+        <input id="url" type="url" placeholder="https://webhook.url.com" />
+        <label for="content-type">Content Type</label>
+        <select id="content-type">
+          <option>application/json</option>
+          <option>application/text</option>
+        </select>
+        <label for="authorization">Authorization</label>
+        <input id="Authorization" type="password" placeholder="Bearer xyz" />
+
+        <hr />
+        <input type="submit" value="Update" />
+      </form>
     </main>
   </body>
 </html>

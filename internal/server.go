@@ -22,8 +22,21 @@ func StartServer(ctx context.Context) {
 		BaseContext: func(l net.Listener) context.Context { return ctx },
 		Handler:     mux,
 	}
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatalln("Error while starting server:", err.Error())
-	}
+
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			log.Fatalln("Error while starting server:", err.Error())
+		}
+	}()
+
+	<-ctx.Done()
+	// err := server.Shutdown(ctx)
+	// if err != nil {
+	// 	log.Printf("graceful shutdown failed: %v, forcing close\n", err)
+	// 	err = server.Close()
+	// 	if err != nil {
+	// 		log.Fatalf("server close failed: %v\n", err)
+	// 	}
+	// }
 }

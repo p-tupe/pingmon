@@ -25,7 +25,7 @@ type Mailer struct {
 	From     string `json:"from"`
 }
 
-type PostRequest struct {
+type Webhook struct {
 	// URL to send the post request to
 	URL string `json:"url"`
 
@@ -58,7 +58,7 @@ type Config struct {
 	Mailer *Mailer `json:"mailer,omitempty"`
 
 	// Custom webhook to send alert on
-	PostRequest *PostRequest `json:"postRequest,omitempty"`
+	Webhook *Webhook `json:"webhook,omitempty"`
 
 	// Path/file to save state in
 	// Defaults to "./pingmon.csv"
@@ -98,7 +98,7 @@ func NewConfig(path string) (*Config, error) {
 		return nil, ErrNoSite
 	}
 
-	if cfg.Mailer == nil && cfg.PostRequest == nil {
+	if cfg.Mailer == nil && cfg.Webhook == nil {
 		return nil, ErrNoAlert
 	}
 
@@ -110,8 +110,8 @@ func NewConfig(path string) (*Config, error) {
 		cfg.Store = DEFAULT_STORE
 	}
 
-	if cfg.PostRequest != nil && cfg.PostRequest.ContentType == "" {
-		cfg.PostRequest.ContentType = DEFAULT_POSTREQUEST_CONTENTTYPE
+	if cfg.Webhook != nil && cfg.Webhook.ContentType == "" {
+		cfg.Webhook.ContentType = DEFAULT_POSTREQUEST_CONTENTTYPE
 	}
 
 	return cfg, nil

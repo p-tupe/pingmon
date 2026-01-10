@@ -18,8 +18,8 @@ func InitAlert(ctx context.Context) {
 }
 
 func SendAlert(msg string) {
-	if cfg.PostRequest != nil {
-		_, err := http.Post(cfg.PostRequest.URL, cfg.PostRequest.ContentType, strings.NewReader(msg))
+	if cfg.Webhook != nil {
+		_, err := http.Post(cfg.Webhook.URL, cfg.Webhook.ContentType, strings.NewReader(msg))
 		if err != nil {
 			log.Println("Error while alerting on ntfy:", err.Error())
 		} else {

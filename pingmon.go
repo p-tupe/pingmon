@@ -7,25 +7,24 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	i "github.com/p-tupe/pingmon/internal"
 )
 
 func main() {
-	ctx := context.Background()
-	ctx, cancelJobs := context.WithCancel(ctx)
+	ctx, cancelJobs := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancelJobs()
 
 	configPath := flag.String("config", "./config.json", "set config file path")
 	flag.Parse()
 
-	// Read Config
 	log.Println("Reading config from", *configPath)
 	config, err := i.NewConfig(*configPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// Enable services
 	go i.InitStore(ctx)
 	go i.InitAlert(ctx)
 	go i.InitJobs(ctx)
@@ -33,11 +32,8 @@ func main() {
 		go i.StartServer(ctx)
 	}
 
-	// Handle Shutdown
 	quitChannel := make(chan os.Signal, 1)
 	signal.Notify(quitChannel, syscall.SIGINT, syscall.SIGTERM)
 	<-quitChannel
-	cancelJobs()
 	log.Println("Shut down gracefully")
-	os.Exit(0)
 }

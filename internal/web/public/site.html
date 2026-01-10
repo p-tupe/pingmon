@@ -2,14 +2,41 @@
 <html>
   <head>
     <title>Pingmon</title>
-    <link rel="stylesheet" href="/static/global.css" />
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
   </head>
-  <body style="width: 90%; max-width: 1440px; margin: 2em auto">
+  <body>
     <header>
-      <h1>Site</h1>
+      <h1>Add Site</h1>
+
+      <nav>
+        <a href="/">Home</a>
+        <a href="/site" disabled>Add Site</a>
+        <a href="/config">Update Config</a>
+        <a href="#" download>Download Logs</a>
+      </nav>
     </header>
+
     <main>
-      <span>Box will come here</span>
+      <form>
+        Check
+        <select>
+          <option>hourly</option>
+          <option>daily</option>
+          <option>weekly</option>
+          <option>monthly</option>
+        </select>
+        for
+        <input type="url" placeholder="https://example.com" />
+        every
+        <select>
+          <option>hour</option>
+          <option>day</option>
+          <option>week</option>
+          <option>month</option>
+        </select>
+        <hr />
+        <input type="submit" value="Add" />
+      </form>
     </main>
   </body>
 </html>
