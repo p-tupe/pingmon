@@ -7,13 +7,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	i "github.com/p-tupe/pingmon/internal"
 )
 
 func main() {
-	ctx, cancelJobs := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancelJobs := context.WithCancel(context.Background())
 	defer cancelJobs()
 
 	configPath := flag.String("config", "./config.json", "set config file path")
@@ -27,9 +26,9 @@ func main() {
 
 	go i.InitStore(ctx)
 	go i.InitAlert(ctx)
-	go i.InitJobs(ctx)
+	jobs := i.InitJobs(ctx)
 	if config.Server.Enabled {
-		go i.StartServer(ctx)
+		go i.StartServer(ctx, jobs)
 	}
 
 	quitChannel := make(chan os.Signal, 1)

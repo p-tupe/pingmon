@@ -5,15 +5,13 @@ import (
 	"log"
 	"net"
 	"net/http"
-
-	"github.com/p-tupe/pingmon/internal/web"
 )
 
-func StartServer(ctx context.Context) {
+func StartServer(ctx context.Context, jobs []*Ping) {
 	log.Println("Starting server on ", cfg.Server.Addr)
 
 	mux := http.NewServeMux()
-	for path, handler := range web.Routes {
+	for path, handler := range InitRoutes(jobs) {
 		mux.HandleFunc(path, handler)
 	}
 
@@ -31,12 +29,12 @@ func StartServer(ctx context.Context) {
 	}()
 
 	<-ctx.Done()
-	// err := server.Shutdown(ctx)
-	// if err != nil {
-	// 	log.Printf("graceful shutdown failed: %v, forcing close\n", err)
-	// 	err = server.Close()
-	// 	if err != nil {
-	// 		log.Fatalf("server close failed: %v\n", err)
-	// 	}
-	// }
+	err := server.Shutdown(ctx)
+	if err != nil {
+		log.Printf("graceful shutdown failed: %v, forcing close\n", err)
+		err = server.Close()
+		if err != nil {
+			log.Fatalf("server close failed: %v\n", err)
+		}
+	}
 }

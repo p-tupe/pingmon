@@ -19,30 +19,28 @@
 
     <main>
       <table>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
-        <tr>
-          <td>Site 1</td>
-          <td>OK</td>
-        </tr>
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Status</td>
+            <td>Last Checked</td>
+          </tr>
+        </thead>
+
+        <tbody>
+          {{ range . }}
+          <tr>
+            <td>{{ .URL }}</td>
+            <td>{{ .OK }}</td>
+            <td>{{ .LastPing }}</td>
+          </tr>
+
+          {{ else }}
+          <tr>
+            <td colspan="3">Add a new job!</td>
+          </tr>
+          {{ end }}
+        </tbody>
       </table>
     </main>
   </body>

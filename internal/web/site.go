@@ -1,18 +1,14 @@
 package web
 
 import (
+	"html/template"
 	"io"
-	"log"
 	"net/http"
 )
 
-func SitePage() http.HandlerFunc {
-	siteHTML, err := publicFS.ReadFile("public/site.html")
-	if err != nil {
-		log.Fatalln("Error while reading site.html, ", err)
-	}
+func SitePage(tmpl *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write(siteHTML)
+		tmpl.ExecuteTemplate(w, "site.html", "")
 	}
 }
 

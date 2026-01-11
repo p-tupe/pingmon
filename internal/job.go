@@ -15,7 +15,8 @@ type Ping struct {
 	Interval time.Duration
 }
 
-func InitJobs(ctx context.Context) {
+func InitJobs(ctx context.Context) []*Ping {
+	var jobs []*Ping
 	for _, site := range cfg.Sites {
 		job, err := NewPingJob(site)
 		if err != nil {
@@ -23,13 +24,16 @@ func InitJobs(ctx context.Context) {
 		}
 
 		go job.start(ctx)
+		jobs = append(jobs, job)
 	}
+
+	return jobs
 }
 
 func NewPingJob(site Site) (*Ping, error) {
 	ping := &Ping{URL: site.URL, Interval: site.Interval}
 
-	if site.Interval < 60 {
+	if site.Interval < 1 {
 		ping.Interval = DEFAULT_INTERVAL
 	}
 

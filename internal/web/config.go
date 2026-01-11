@@ -1,18 +1,14 @@
 package web
 
 import (
+	"html/template"
 	"io"
-	"log"
 	"net/http"
 )
 
-func ConfigPage() http.HandlerFunc {
-	configHTML, err := publicFS.ReadFile("public/config.html")
-	if err != nil {
-		log.Fatalln("Error while reading site.html, ", err)
-	}
+func ConfigPage(tmpl *template.Template) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Write(configHTML)
+		tmpl.ExecuteTemplate(w, "config.html", "")
 	}
 }
 
